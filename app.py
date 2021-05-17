@@ -145,7 +145,6 @@ def signin():
                     token = jwt.encode({
                         'email': email
                     }, app.config['SECRET_KEY'])
-                    print(token)
                     update_query = {"$set": {"token": token}}
                     user_col.update_one(query, update_query)
                     response = app.response_class(
