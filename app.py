@@ -151,6 +151,7 @@ def signin():
                         response=json.dumps({
                             "message": 'success',
                             "user": {
+                                "id": mydoc[0]['_id'],
                                 "email": email,
                                 "token": token.decode('utf-8')
                             }
