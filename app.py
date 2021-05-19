@@ -32,7 +32,8 @@ def token_required(f):
         if not token:
             return app.response_class(
                 response=json.dumps({
-                    "message": 'token is missing'
+                    "message": 'token is missing',
+                    "status": 401,
                 }),
                 status=401,
                 mimetype='application/json'
@@ -46,7 +47,8 @@ def token_required(f):
         except:
             return app.response_class(
                 response=json.dumps({
-                    "message": 'token is invalid'
+                    "message": 'token is invalid',
+                    "status": 401,
                 }),
                 status=401,
                 mimetype='application/json')
@@ -69,7 +71,8 @@ def signout(current_user):
         user_col.update_one(query, update_query)
         response = app.response_class(
             response=json.dumps({
-                "message": 'success'
+                "message": 'success',
+                "status": 200,
             }),
             status=200,
             mimetype='application/json'
@@ -100,7 +103,8 @@ def signup():
             user_data = user_col.insert_one(user)
             response = app.response_class(
                 response=json.dumps({
-                    "message": 'success'
+                    "message": 'success',
+                    "status": 200,
                 }),
                 status=200,
                 mimetype='application/json'
@@ -110,7 +114,8 @@ def signup():
         else:
             response = app.response_class(
                 response=json.dumps({
-                    "message": 'already exist'
+                    "message": 'already exist',
+                    "status": 403,
                 }),
                 status=403,
                 mimetype='application/json'
@@ -120,7 +125,8 @@ def signup():
         print(e)
         response = app.response_class(
             response=json.dumps({
-                "message": 'something wrong'
+                "message": 'something wrong',
+                "status": 422,
             }),
             status=422,
             mimetype='application/json'
@@ -151,6 +157,7 @@ def signin():
                     response = app.response_class(
                         response=json.dumps({
                             "message": 'success',
+                            "status": 200,
                             "user": {
                                 "id": str(mydoc[0]['_id']),
                                 "email": email,
@@ -165,6 +172,7 @@ def signin():
                     response = app.response_class(
                         response=json.dumps({
                             "message": 'already login',
+                            "status": 403,
                         }),
                         status=403,
                         mimetype='application/json'
@@ -175,6 +183,7 @@ def signin():
                 response = app.response_class(
                     response=json.dumps({
                         "message": 'wrong password',
+                        "status": 403,
                     }),
                     status=403,
                     mimetype='application/json'
@@ -184,7 +193,8 @@ def signin():
         else:
             response = app.response_class(
                 response=json.dumps({
-                    "message": 'email does not exist'
+                    "message": 'email does not exist',
+                    "status": 403,
                 }),
                 status=403,
                 mimetype='application/json'
@@ -194,7 +204,8 @@ def signin():
         print(e)
         response = app.response_class(
             response=json.dumps({
-                "message": 'something wrong'
+                "message": 'something wrong',
+                "status": 422,
             }),
             status=422,
             mimetype='application/json'
@@ -202,7 +213,7 @@ def signin():
         return response
 
 
-@app.route(BASE_URL+"/dummy")
+@app.route(BASE_URL+"/user/dummy")
 def seed_user():
     query = {"email": "dummy@gmail.com"}
     mydoc = list(user_col.find(query))
@@ -214,6 +225,30 @@ def seed_user():
                      "password": "dummypassword", "token": ""}
         user = user_col.insert_one(dummyUser)
         return "Inserted with id:" + str(user.inserted_id)
+
+
+@app.route(BASE_URL+"/user/list")
+def see_all_user():
+
+    mydoc = list(user_col.find({}))
+    newList = []
+    for i in mydoc:
+
+        data = {
+            "email": i['email'],
+            "password": i['password'],
+            "token": i['token'],
+            "_id": str(i["_id"])
+        }
+        newList.append(data)
+
+    return str(newList)
+
+
+@app.route(BASE_URL+"/user/delete")
+def delete_all_user():
+    user_col.remove({})
+    return "Deleted all user"
 
 
 def is_email_available(email):
