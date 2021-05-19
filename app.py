@@ -146,12 +146,13 @@ def signin():
                         'email': email
                     }, app.config['SECRET_KEY'])
                     update_query = {"$set": {"token": token}}
+
                     user_col.update_one(query, update_query)
                     response = app.response_class(
                         response=json.dumps({
                             "message": 'success',
                             "user": {
-                                "id": mydoc[0]['_id'],
+                                "id": str(mydoc[0]['_id']),
                                 "email": email,
                                 "token": token.decode('utf-8')
                             }
