@@ -13,11 +13,11 @@ analytics_bp = Blueprint('analytics', __name__)
 #Brand, Movie, Video Game, Musician, Actor
 
 enum = {
-    47:"Brand",
-    86:"Movie",
-    71:"Video Game",
-    54:"Musician",
-    55:"Actor"
+    "Brand":47,
+    "Movie":86,
+    "Video Game":71,
+    "Musician":54,
+    "Actor":55
 }
 
 
