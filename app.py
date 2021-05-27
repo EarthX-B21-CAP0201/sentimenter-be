@@ -17,6 +17,7 @@ client = MongoClient(
 
 db = client['myFirstDatabase']
 user_col = db['users']
+history_col = db['history']
 
 BASE_URL = "/api/v1"
 
