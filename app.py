@@ -64,7 +64,8 @@ app.register_blueprint(auth_bp, url_prefix=BASE_URL+'/authentication')
 from services.analytics import analytics_bp
 app.register_blueprint(analytics_bp, url_prefix=BASE_URL+'/analytics')
 
-
+from services.analysis import analysis_bp
+app.register_blueprint(analysis_bp, url_prefix=BASE_URL+'/analysis')
 
 @app.route("/")
 def index():
@@ -112,4 +113,4 @@ def delete_all_user():
 # decorator for verifying the JWT
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=3000)
+    app.run(debug=True, host='0.0.0.0', port=8080)
