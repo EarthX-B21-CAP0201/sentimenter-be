@@ -21,7 +21,18 @@ def model_predict():
     prediction_url = os.environ['MODEL_URL']+':predict'
     print(data)
 
-    tweets = get_tweet(data)
+    try:
+        tweets = get_tweet(data)
+    except Exception as e:
+        print(e)
+        response = app.response_class(
+            response=json.dumps({
+                "message": 'something wrong'
+            }),
+            status=400,
+            mimetype='application/json'
+        )
+        return response
 
     predictions = []
 
