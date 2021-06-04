@@ -1,7 +1,7 @@
 from flask import Blueprint, current_app, request
 from werkzeug.wrappers import response
 from datetime import date, datetime, time, timedelta
-from app import app, token_required
+from app import app, token_required, db
 from dotenv import load_dotenv
 from collections import Counter
 import json
@@ -12,11 +12,13 @@ import numpy as np
 from keras.preprocessing.sequence import pad_sequences
 
 analysis_bp = Blueprint('analysis', __name__)
+history_col = db['history']
 load_dotenv()
 
 @analysis_bp.route('', methods=['POST'])
 # @token_required
-def model_predict():
+def model_predict(current_user):
+
     data = dict()
     keyword = request.form.get('keyword')
     language = "en"
@@ -69,16 +71,30 @@ def model_predict():
             mimetype='application/json'
         )
         return response
+
+    result_json = {
+        "name":data['keyword'],
+        "sentiment":sentiment,
+        "percentage":percent,
+        "total_tweet": len(tweets)
+    }
+
+    history = {
+        "user":current_user,
+        "date_created": str(date.today()),
+        "type":"Sentiment Analysis",
+        "keyword":keyword,
+        "result": result_json
+    }
+    try:
+        history_data = history_col.insert_one(history)
+    except Exception as e:
+        raise "Failed to insert to database"
     
     response = app.response_class(
         response=json.dumps({
                 "message": 'Success',
-                "data": {
-                    "name":data['keyword'],
-                    "sentiment":sentiment,
-                    "percentage":percent,
-                    "total_tweet": len(tweets)
-                    },
+                "data": result_json,
                 "status": 200,
             }),
         status=200,
