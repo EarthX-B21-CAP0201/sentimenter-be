@@ -17,9 +17,15 @@ load_dotenv()
 @analysis_bp.route('', methods=['POST'])
 # @token_required
 def model_predict():
-    data = request.get_json()
+    data = dict()
+    keyword = request.form.get('keyword')
+    language = "en"
+    data.update({
+        'keyword':keyword,
+        'lang':language,
+        'max_results':50
+    })
     prediction_url = os.environ['MODEL_URL']+':predict'
-    print(data)
 
     try:
         tweets = get_tweet(data)
