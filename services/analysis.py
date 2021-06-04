@@ -16,7 +16,7 @@ history_col = db['history']
 load_dotenv()
 
 @analysis_bp.route('', methods=['POST'])
-# @token_required
+@token_required
 def model_predict(current_user):
 
     data = dict()
